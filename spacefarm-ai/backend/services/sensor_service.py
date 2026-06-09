@@ -9,7 +9,8 @@ def save_sensor_data(data):
         "umidade_ar": data["umidade_ar"],
         "umidade_solo": data["umidade_solo"],
         "luminosidade": data["luminosidade"],
-        "timestamp": datetime.now()
+        "timestamp": datetime.now(),
+        "ndvi": data.get("ndvi")
     }
 
     result = sensor_collection.insert_one(document)

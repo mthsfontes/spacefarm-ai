@@ -30,3 +30,18 @@ def latest_data():
     data["_id"] = str(data["_id"])
 
     return jsonify(data)
+
+@api.route("/history", methods=["GET"])
+def history():
+
+    data = list(
+        sensor_collection
+        .find()
+        .sort("timestamp", -1)
+        .limit(100)
+    )
+
+    for item in data:
+        item["_id"] = str(item["_id"])
+
+    return jsonify(data)
