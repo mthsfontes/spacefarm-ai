@@ -1,3 +1,11 @@
+import sys
+from pathlib import Path
+
+ROOT_DIR = Path(__file__).parent.parent
+sys.path.append(str(ROOT_DIR))
+
+from ml.predict_service import predict_irrigation
+
 import streamlit as st
 from services.api_client import (
     get_latest_data,
@@ -6,6 +14,11 @@ from services.api_client import (
 import pandas as pd
 from streamlit_autorefresh import (
     st_autorefresh
+)
+
+data = get_latest_data()
+prediction, confidence = (
+    predict_irrigation(data)
 )
 
 history = get_history()
@@ -17,6 +30,14 @@ st.set_page_config(
 )
 
 st.title("🚀 SpaceFarm AI")
+
+st.markdown("""
+### Agricultura Preditiva Baseada em Observação Espacial
+
+Monitoramento inteligente utilizando sensores IoT, dados espaciais e Inteligência Artificial para otimizar o uso de recursos agrícolas.
+""")
+
+
 
 data = get_latest_data()
 
@@ -46,6 +67,118 @@ col5.metric(
     "🛰 NDVI",
     data['ndvi']
 )
+
+st.divider()
+
+st.subheader(
+    "🤖 Inteligência Artificial"
+)
+
+if prediction == 1:
+
+    st.error(
+        f"🚨 Irrigação Recomendada "
+        f"({confidence:.0%})"
+    )
+
+else:
+
+    st.success(
+        f"✅ Irrigação Não Necessária "
+        f"({confidence:.0%})"
+    )
+    
+st.subheader(
+    "📋 Motivos da Recomendação"
+)
+
+motivos = []
+
+if data["umidade_solo"] < 35:
+    motivos.append(
+        "Baixa umidade do solo"
+    )
+
+if data["umidade_solo"] < 35:
+    motivos.append(
+        "Baixa umidade do solo"
+    )
+    
+if data["ndvi"] < 0.5:
+    motivos.append(
+        "Vegetação em possível estresse"
+    )
+    
+for motivo in motivos:
+    st.write(
+        f"• {motivo}"
+    )
+    
+risk_score = 0
+
+risk_score += data["temperatura"] * 1.5
+
+risk_score += (
+    100 - data["umidade_solo"]
+)
+
+risk_score += (
+    (1 - data["ndvi"]) * 100
+)
+
+risk_score = min(
+    int(risk_score),
+    100
+)
+
+farm_score = (
+    (data["umidade_solo"] * 0.4)
+    +
+    (data["ndvi"] * 100 * 0.4)
+    +
+    ((100 - risk_score) * 0.2)
+)
+
+farm_score = int(min(farm_score,100))
+
+st.metric(
+    "🌎 Índice Geral da Fazenda",
+    f"{farm_score}/100"
+)
+
+st.subheader(
+    "🌾 Risco Hídrico"
+)
+
+st.progress(
+    risk_score / 100
+)
+
+st.write(
+    f"{risk_score}%"
+)
+
+st.subheader(
+    "💡 Recomendações"
+)
+
+if risk_score > 80:
+
+    st.warning(
+        "Realizar irrigação imediatamente."
+    )
+
+elif risk_score > 50:
+
+    st.info(
+        "Monitorar área nas próximas horas."
+    )
+
+else:
+
+    st.success(
+        "Condição adequada."
+    )
 
 st.subheader(
     "Status Atual da Fazenda"
