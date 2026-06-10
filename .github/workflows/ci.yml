@@ -12,7 +12,7 @@ jobs:
 
     defaults:
       run:
-        working-directory: 2TIAO/Global-Solution-1/src
+        working-directory: spacefarm-ai
 
     steps:
       - uses: actions/checkout@v4
@@ -21,7 +21,7 @@ jobs:
         with:
           python-version: "3.12"
           cache: pip
-          cache-dependency-path: 2TIAO/Global-Solution-1/src/requirements.txt
+          cache-dependency-path: spacefarm-ai/requirements.txt
 
       - name: Instalar dependências
         run: |
