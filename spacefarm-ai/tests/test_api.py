@@ -1,3 +1,5 @@
+import time
+
 LEITURA_VALIDA = {
     "temperatura": 30,
     "umidade_ar": 60,
@@ -78,6 +80,10 @@ def test_latest_data_retorna_mais_recente(client):
     segunda = dict(LEITURA_VALIDA, temperatura=99)
 
     client.post("/sensor-data", json=primeira)
+
+    # garante timestamps distintos entre as duas leituras
+    time.sleep(0.01)
+
     client.post("/sensor-data", json=segunda)
 
     response = client.get("/latest-data")
