@@ -24,7 +24,7 @@
 - Nome do Coordenador(a)
 
 ## 🎬 Vídeo demonstrativo
-- YouTube (não listado): https://youtu.be/b45cHwczqPU
+- YouTube (não listado): LINK_VIDEO
 
 ## 📄 Documentação da entrega
 - [PDF da entrega](docs/SpaceFarm_AI_Documentacao.pdf)
