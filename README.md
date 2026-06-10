@@ -17,6 +17,12 @@
 - Douglas Felicio da Silva — RM572312
 - Matheus Fontes — RM570457
 
+## 👩‍🏫 Professores:
+### Tutor(a)
+- Nome do Tutor(a)
+### Coordenador(a)
+- Nome do Coordenador(a)
+
 ## 🎬 Vídeo demonstrativo
 - YouTube (não listado): LINK_VIDEO
 
@@ -166,105 +172,78 @@ O dashboard do **SpaceFarm AI** apresenta de forma visual e interativa:
 
 ## Instruções Básicas de Execução
 
-### 1. Clonar o repositório
+### 1. Clonar o repositório e entrar na pasta do projeto
 
 ```bash
-git clone <URL_DO_REPOSITORIO>
-cd <NOME_DA_PASTA_DO_PROJETO>
+git clone https://github.com/mthsfontes/spacefarm-ai.git
+cd spacefarm-ai/spacefarm-ai
 ```
 
-### 2. Criar um ambiente virtual
+### 2. Criar e ativar o ambiente virtual
 
 ```bash
 python -m venv venv
+source venv/bin/activate        # Linux/Mac
+# venv\Scripts\activate         # Windows
 ```
 
-### 3. Ativar o ambiente virtual
-
-No Windows:
-
-```bash
-venv\Scripts\activate
-```
-
-No Linux ou macOS:
-
-```bash
-source venv/bin/activate
-```
-
-### 4. Instalar as dependências
+### 3. Instalar as dependências
 
 ```bash
 pip install -r requirements.txt
 ```
 
-### 5. Configurar as variáveis de ambiente
-
-Crie um arquivo `.env` na raiz do projeto e configure as variáveis necessárias, como a conexão com o MongoDB Atlas:
-
-```env
-MONGO_URI=<SUA_STRING_DE_CONEXAO_MONGODB>
-```
-
-### 6. Executar a API Flask
+### 4. Configurar as variáveis de ambiente
 
 ```bash
-python app.py
+cp .env.example .env
+# edite o .env e preencha o MONGO_URI com as credenciais do MongoDB Atlas
 ```
 
-> Caso o arquivo principal da API tenha outro nome, substitua `app.py` pelo nome correto.
-
-### 7. Executar o Dashboard Streamlit
+### 5. Executar (3 terminais)
 
 ```bash
-streamlit run dashboard.py
+python -m backend.app             # terminal 1 — API Flask (porta 5000)
+python sensor_simulator.py        # terminal 2 — simulador de sensores IoT
+streamlit run dashboard/app.py    # terminal 3 — dashboard (porta 8501)
 ```
 
-> Caso o dashboard esteja em outra pasta ou possua outro nome, ajuste o comando conforme a estrutura do projeto.
+### Alternativa com Docker
 
----
+```bash
+cp .env.example .env              # preencher MONGO_URI
+docker compose up --build         # sobe API, dashboard e simulador
+```
 
-## Estrutura Sugerida do Projeto
+### Testes
+
+```bash
+pip install pytest mongomock
+pytest tests/ -v
+```
+
+## Estrutura do Projeto
 
 ```text
-SpaceFarm-AI/
+spacefarm-ai/
 │
-├── README.md
-├── requirements.txt
-├── app.py
-├── dashboard.py
-├── .env.example
+├── README.md                  # Este arquivo
+├── assets/                    # Imagens e logos
+├── docs/                      # Entregáveis: PDF da documentação e vídeo
 │
-├── data/
-│   └── README.md
-│
-├── models/
-│   └── README.md
-│
-├── src/
-│   └── README.md
-│
-└── docs/
-    └── README.md
+└── spacefarm-ai/              # Código-fonte do projeto
+    ├── backend/               # API Flask (validação, rotas, serviços)
+    ├── dashboard/             # Dashboard Streamlit
+    ├── database/              # Conexão com MongoDB Atlas (via .env)
+    ├── ml/                    # Pipeline de Machine Learning
+    ├── data/                  # Geração de dataset sintético
+    ├── tests/                 # Testes automatizados (pytest)
+    ├── sensor_simulator.py    # Simulador de sensores IoT
+    ├── Dockerfile / docker-compose.yml
+    └── requirements.txt
 ```
 
----
-
-## Observação Sobre os READMEs das Pastas
-
-Cada pasta do projeto deve possuir seu próprio arquivo `README.md`, seguindo o template definido para aquela seção da atividade.
-
-O `README.md` da raiz deve conter obrigatoriamente:
-
-- nome do projeto;
-- proposta da solução;
-- funcionamento geral;
-- tecnologias utilizadas;
-- integrantes do grupo;
-- instruções básicas de execução.
-
----
+Mais detalhes técnicos (rotas da API, pipeline de ML, CI) no [README do código](spacefarm-ai/README.md).
 
 ## Conclusão
 
