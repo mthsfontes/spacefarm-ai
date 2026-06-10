@@ -169,10 +169,11 @@ e o serviço de predição do modelo. Eles também rodam automaticamente no GitH
 
 ## 👥 Equipe
 
-| Nome            | RM       |
-|-----------------|----------|
-| Matheus Fontes  | RM______ |
-| Douglas Felício | RM______ |
+| Nome                      | RM       |
+|---------------------------|----------|
+| Richard Wrobel dos Santos | RM573998 |
+| Douglas Felicio da Silva  | RM572312 |
+| Matheus Fontes            | RM570457 |
 
 ## 🛠 Tecnologias
 
