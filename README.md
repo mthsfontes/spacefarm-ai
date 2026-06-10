@@ -29,6 +29,9 @@
 ## 📄 Documentação da entrega
 - [PDF da entrega](docs/SpaceFarm_AI_Documentacao.pdf)
 
+## 🗂 Estrutura do template TIAO-2026
+- A atividade está documentada em [`1TIAO/Global-Solution-1`](1TIAO/Global-Solution-1), seguindo a hierarquia do [TEMPLATE-TIAO-2026](https://github.com/CaiqueFiap-2026/TEMPLATE-TIAO-2026)
+
 ---
 
 
