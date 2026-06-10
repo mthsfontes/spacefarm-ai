@@ -2,7 +2,7 @@ SpaceFarm AI
 Integrantes do Grupo
 Richard Wrobel dos Santos
 Matheus Fontes
-[Nome do integrante 3]
+Douglas Felicio da Silva
 [Nome do integrante 4]
 Substitua os campos entre colchetes pelos nomes completos dos demais integrantes do grupo, conforme solicitado no README da raiz da atividade.
 Proposta do Projeto
