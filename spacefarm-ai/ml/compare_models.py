@@ -1,3 +1,5 @@
+import json
+
 import pandas as pd
 
 from sklearn.model_selection import train_test_split
@@ -115,3 +117,18 @@ results_df = pd.DataFrame(results)
 print("\nRESULTADOS:\n")
 
 print(results_df)
+
+# Salvar métricas para exibição no dashboard
+with open(
+    "ml/models/model_metrics.json",
+    "w",
+    encoding="utf-8"
+) as arquivo:
+    json.dump(
+        results,
+        arquivo,
+        indent=4,
+        ensure_ascii=False
+    )
+
+print("Métricas salvas em ml/models/model_metrics.json")

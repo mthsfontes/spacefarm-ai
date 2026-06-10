@@ -1,3 +1,4 @@
+import json
 import sys
 from pathlib import Path
 
@@ -5,18 +6,30 @@ ROOT_DIR = Path(__file__).parent.parent
 sys.path.append(str(ROOT_DIR))
 
 import pandas as pd
+import plotly.graph_objects as go
 import requests
 import streamlit as st
 from streamlit_autorefresh import st_autorefresh
 
-from ml.predict_service import predict_irrigation
+from ml.predict_service import model, predict_irrigation
 from services.api_client import (
     get_latest_data,
     get_history
 )
 
+METRICS_PATH = ROOT_DIR / "ml" / "models" / "model_metrics.json"
+
+FEATURE_LABELS = {
+    "temperatura": "Temperatura",
+    "umidade_ar": "Umidade do Ar",
+    "umidade_solo": "Umidade do Solo",
+    "luminosidade": "Luminosidade",
+    "ndvi": "NDVI"
+}
+
 st.set_page_config(
     page_title="SpaceFarm AI",
+    page_icon="🚀",
     layout="wide"
 )
 
@@ -28,7 +41,7 @@ st_autorefresh(
 st.title("🚀 SpaceFarm AI")
 
 st.markdown("""
-### Agricultura Preditiva Baseada em Observação Espacial
+#### Agricultura Preditiva Baseada em Observação Espacial
 
 Monitoramento inteligente utilizando sensores IoT, dados espaciais e Inteligência Artificial para otimizar o uso de recursos agrícolas.
 """)
@@ -61,6 +74,34 @@ if "timestamp" in df.columns:
     df["timestamp"] = pd.to_datetime(df["timestamp"])
     df = df.set_index("timestamp")
 
+with st.sidebar:
+
+    st.header("🚀 SpaceFarm AI")
+
+    st.caption(
+        "Observação espacial + IoT + IA "
+        "aplicadas à agricultura"
+    )
+
+    st.success("🟢 API conectada")
+
+    st.metric(
+        "Leituras recentes",
+        len(df)
+    )
+
+    if isinstance(df.index, pd.DatetimeIndex) and len(df):
+        st.caption(
+            f"Última leitura: "
+            f"{df.index.max():%d/%m/%Y %H:%M:%S}"
+        )
+
+# ----------------------------------------
+# 1. Monitoramento Ambiental
+# ----------------------------------------
+
+st.header("🌡 Monitoramento Ambiental")
+
 col1, col2, col3, col4, col5 = st.columns(5)
 
 col1.metric(
@@ -90,70 +131,74 @@ col5.metric(
 
 st.divider()
 
-st.subheader(
-    "🤖 Inteligência Artificial"
+# ----------------------------------------
+# 2. Módulo de Observação Espacial
+# ----------------------------------------
+
+st.header("🛰 Módulo de Observação Espacial")
+
+ndvi = data["ndvi"]
+
+media_ndvi = (
+    df["ndvi"].mean()
+    if "ndvi" in df.columns
+    else ndvi
 )
 
-if prediction == 1:
+col_ndvi, col_grafico = st.columns([1, 2])
 
-    st.error(
-        f"🚨 Irrigação Recomendada "
-        f"({confidence:.0%})"
+with col_ndvi:
+
+    st.metric(
+        "NDVI atual",
+        ndvi,
+        delta=f"{ndvi - media_ndvi:+.2f} vs média recente"
     )
 
-else:
+    if ndvi >= 0.6:
+        st.success("🟢 Vegetação saudável")
 
-    st.success(
-        f"✅ Irrigação Não Necessária "
-        f"({confidence:.0%})"
-    )
+    elif ndvi >= 0.4:
+        st.warning("🟡 Vegetação em condição moderada")
 
-st.subheader(
-    "📋 Motivos da Recomendação"
+    else:
+        st.error("🔴 Possível estresse ou degradação")
+
+with col_grafico:
+
+    st.caption("Evolução do NDVI nas últimas leituras")
+
+    if "ndvi" in df.columns:
+        st.line_chart(df["ndvi"])
+
+st.caption(
+    "O NDVI (Normalized Difference Vegetation Index) é o índice usado por "
+    "satélites de observação terrestre para medir a saúde da vegetação: "
+    "quanto mais próximo de 1, mais densa e saudável é a cobertura vegetal."
 )
 
-motivos = []
+st.divider()
 
-if data["umidade_solo"] < 35:
-    motivos.append(
-        "Baixa umidade do solo"
-    )
+# ----------------------------------------
+# 3. Risco Hídrico
+# ----------------------------------------
 
-if data["temperatura"] > 32:
-    motivos.append(
-        "Temperatura elevada"
-    )
+st.header("🌾 Risco Hídrico")
 
-if data["ndvi"] < 0.5:
-    motivos.append(
-        "Vegetação em possível estresse"
-    )
+# Cada componente vai de 0 a 100; o score final é a média ponderada
+risco_solo = 100 - data["umidade_solo"]
 
-if not motivos:
-    motivos.append(
-        "Condições dentro da normalidade"
-    )
-
-for motivo in motivos:
-    st.write(
-        f"• {motivo}"
-    )
-
-risk_score = 0
-
-risk_score += data["temperatura"] * 1.5
-
-risk_score += (
-    100 - data["umidade_solo"]
-)
-
-risk_score += (
-    (1 - data["ndvi"]) * 100
-)
-
-risk_score = min(
-    int(risk_score),
+risco_temperatura = min(
+    max((data["temperatura"] - 20) * 5, 0),
     100
+)
+
+risco_vegetacao = (1 - data["ndvi"]) * 100
+
+risk_score = int(
+    (risco_solo * 0.45)
+    + (risco_temperatura * 0.25)
+    + (risco_vegetacao * 0.30)
 )
 
 farm_score = (
@@ -166,89 +211,190 @@ farm_score = (
 
 farm_score = int(min(farm_score, 100))
 
-st.metric(
-    "🌎 Índice Geral da Fazenda",
-    f"{farm_score}/100"
-)
+col_risco, col_fazenda = st.columns(2)
 
-st.subheader(
-    "🌾 Risco Hídrico"
-)
+with col_risco:
 
-st.progress(
-    risk_score / 100
-)
+    gauge_risco = go.Figure(go.Indicator(
+        mode="gauge+number",
+        value=risk_score,
+        title={"text": "Risco Hídrico (%)"},
+        gauge={
+            "axis": {"range": [0, 100]},
+            "bar": {"color": "#1f4e79"},
+            "steps": [
+                {"range": [0, 50], "color": "#c8e6c9"},
+                {"range": [50, 80], "color": "#fff9c4"},
+                {"range": [80, 100], "color": "#ffcdd2"}
+            ]
+        }
+    ))
 
-st.write(
-    f"{risk_score}%"
-)
+    gauge_risco.update_layout(height=260, margin=dict(t=40, b=10))
 
-st.subheader(
-    "💡 Recomendações"
-)
+    st.plotly_chart(gauge_risco, use_container_width=True)
+
+with col_fazenda:
+
+    gauge_fazenda = go.Figure(go.Indicator(
+        mode="gauge+number",
+        value=farm_score,
+        title={"text": "Índice Geral da Fazenda"},
+        gauge={
+            "axis": {"range": [0, 100]},
+            "bar": {"color": "#2e7d32"},
+            "steps": [
+                {"range": [0, 40], "color": "#ffcdd2"},
+                {"range": [40, 70], "color": "#fff9c4"},
+                {"range": [70, 100], "color": "#c8e6c9"}
+            ]
+        }
+    ))
+
+    gauge_fazenda.update_layout(height=260, margin=dict(t=40, b=10))
+
+    st.plotly_chart(gauge_fazenda, use_container_width=True)
 
 if risk_score > 80:
 
     st.warning(
-        "Realizar irrigação imediatamente."
+        "💡 Recomendação: realizar irrigação imediatamente."
     )
 
 elif risk_score > 50:
 
     st.info(
-        "Monitorar área nas próximas horas."
+        "💡 Recomendação: monitorar a área nas próximas horas."
     )
 
 else:
 
     st.success(
-        "Condição adequada."
+        "💡 Recomendação: condição adequada, nenhuma ação necessária."
     )
 
-st.subheader(
-    "Status Atual da Fazenda"
-)
+st.divider()
 
-if data["umidade_solo"] < 25:
+# ----------------------------------------
+# 4. Inteligência Artificial
+# ----------------------------------------
+
+st.header("🤖 Inteligência Artificial")
+
+if prediction == 1:
 
     st.error(
-        "⚠ Risco de estresse hídrico"
-    )
-
-elif data["umidade_solo"] < 40:
-
-    st.warning(
-        "🟡 Atenção ao solo"
+        f"🚨 Irrigação Recomendada "
+        f"(confiança: {confidence:.0%})"
     )
 
 else:
 
     st.success(
-        "🟢 Condição saudável"
+        f"✅ Irrigação Não Necessária "
+        f"(confiança: {confidence:.0%})"
     )
+
+col_motivos, col_importancia = st.columns(2)
+
+with col_motivos:
+
+    st.subheader("📋 Motivos da Recomendação")
+
+    motivos = []
+
+    if data["umidade_solo"] < 35:
+        motivos.append(
+            "Baixa umidade do solo"
+        )
+
+    if data["temperatura"] > 32:
+        motivos.append(
+            "Temperatura elevada"
+        )
+
+    if data["ndvi"] < 0.5:
+        motivos.append(
+            "Vegetação em possível estresse"
+        )
+
+    if not motivos:
+        motivos.append(
+            "Condições dentro da normalidade"
+        )
+
+    for motivo in motivos:
+        st.write(
+            f"• {motivo}"
+        )
+
+with col_importancia:
+
+    st.subheader("🔍 O que a IA mais considera")
+
+    importancias = pd.Series(
+        model.feature_importances_,
+        index=[
+            FEATURE_LABELS.get(nome, nome)
+            for nome in model.feature_names_in_
+        ]
+    ).sort_values(ascending=False)
+
+    st.bar_chart(importancias)
+
+    st.caption(
+        "Importância de cada variável na decisão do modelo (Decision Tree)."
+    )
+
+st.subheader("⚖️ Comparação de Modelos")
+
+if METRICS_PATH.exists():
+
+    metricas = json.loads(
+        METRICS_PATH.read_text(encoding="utf-8")
+    )
+
+    metricas_df = (
+        pd.DataFrame(metricas)
+        .set_index("Modelo")
+    )
+
+    st.dataframe(
+        metricas_df.style.format("{:.1%}"),
+        use_container_width=True
+    )
+
+    st.caption(
+        "Métricas calculadas em dados de teste (20% do dataset). "
+        "O modelo em produção é a Decision Tree."
+    )
+
+else:
+
+    st.info(
+        "Execute `python ml/compare_models.py` para gerar a comparação de modelos."
+    )
+
+st.divider()
+
+# ----------------------------------------
+# 5. Histórico
+# ----------------------------------------
+
+st.header("📈 Histórico de Leituras")
 
 if not df.empty:
 
     col6, col7 = st.columns(2)
 
     with col6:
-        st.subheader("Histórico de Temperatura")
+        st.subheader("Temperatura")
         st.line_chart(
             df["temperatura"]
         )
 
     with col7:
-        st.subheader(
-            "Histórico de Umidade do Solo"
-        )
+        st.subheader("Umidade do Solo")
         st.line_chart(
             df["umidade_solo"]
         )
-
-    st.subheader(
-        "Índice NDVI"
-    )
-
-    st.line_chart(
-        df["ndvi"]
-    )

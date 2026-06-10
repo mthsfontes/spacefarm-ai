@@ -1,0 +1,14 @@
+[
+    {
+        "Modelo": "Decision Tree",
+        "Accuracy": 0.9801100296233601,
+        "Precision": 0.8900523560209425,
+        "Recall": 0.8673469387755102
+    },
+    {
+        "Modelo": "Random Forest",
+        "Accuracy": 0.9834955564959796,
+        "Precision": 0.9385474860335196,
+        "Recall": 0.8571428571428571
+    }
+]
