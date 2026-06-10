@@ -1,9 +1,16 @@
+from pathlib import Path
+
 import joblib
 import pandas as pd
 
-model = joblib.load(
-    "ml/models/irrigation_model.pkl"
+MODEL_PATH = (
+    Path(__file__).parent
+    / "models"
+    / "irrigation_model.pkl"
 )
+
+model = joblib.load(MODEL_PATH)
+
 
 def predict_irrigation(data):
 

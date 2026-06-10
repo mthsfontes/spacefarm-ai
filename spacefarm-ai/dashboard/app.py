@@ -4,29 +4,25 @@ from pathlib import Path
 ROOT_DIR = Path(__file__).parent.parent
 sys.path.append(str(ROOT_DIR))
 
-from ml.predict_service import predict_irrigation
-
+import pandas as pd
+import requests
 import streamlit as st
+from streamlit_autorefresh import st_autorefresh
+
+from ml.predict_service import predict_irrigation
 from services.api_client import (
     get_latest_data,
     get_history
 )
-import pandas as pd
-from streamlit_autorefresh import (
-    st_autorefresh
-)
-
-data = get_latest_data()
-prediction, confidence = (
-    predict_irrigation(data)
-)
-
-history = get_history()
-df = pd.DataFrame(history)
 
 st.set_page_config(
     page_title="SpaceFarm AI",
     layout="wide"
+)
+
+st_autorefresh(
+    interval=15000,
+    key="refresh"
 )
 
 st.title("🚀 SpaceFarm AI")
@@ -37,9 +33,33 @@ st.markdown("""
 Monitoramento inteligente utilizando sensores IoT, dados espaciais e Inteligência Artificial para otimizar o uso de recursos agrícolas.
 """)
 
+try:
+    data = get_latest_data()
+    history = get_history()
 
+except requests.exceptions.RequestException:
+    st.error(
+        "⚠ Não foi possível conectar à API. "
+        "Verifique se o backend está rodando (python -m backend.app)."
+    )
+    st.stop()
 
-data = get_latest_data()
+if not isinstance(data, dict) or "temperatura" not in data:
+    st.warning(
+        "Ainda não há leituras no banco. "
+        "Execute o simulador (python sensor_simulator.py) para gerar dados."
+    )
+    st.stop()
+
+prediction, confidence = (
+    predict_irrigation(data)
+)
+
+df = pd.DataFrame(history[::-1])
+
+if "timestamp" in df.columns:
+    df["timestamp"] = pd.to_datetime(df["timestamp"])
+    df = df.set_index("timestamp")
 
 col1, col2, col3, col4, col5 = st.columns(5)
 
@@ -87,7 +107,7 @@ else:
         f"✅ Irrigação Não Necessária "
         f"({confidence:.0%})"
     )
-    
+
 st.subheader(
     "📋 Motivos da Recomendação"
 )
@@ -99,21 +119,26 @@ if data["umidade_solo"] < 35:
         "Baixa umidade do solo"
     )
 
-if data["umidade_solo"] < 35:
+if data["temperatura"] > 32:
     motivos.append(
-        "Baixa umidade do solo"
+        "Temperatura elevada"
     )
-    
+
 if data["ndvi"] < 0.5:
     motivos.append(
         "Vegetação em possível estresse"
     )
-    
+
+if not motivos:
+    motivos.append(
+        "Condições dentro da normalidade"
+    )
+
 for motivo in motivos:
     st.write(
         f"• {motivo}"
     )
-    
+
 risk_score = 0
 
 risk_score += data["temperatura"] * 1.5
@@ -139,7 +164,7 @@ farm_score = (
     ((100 - risk_score) * 0.2)
 )
 
-farm_score = int(min(farm_score,100))
+farm_score = int(min(farm_score, 100))
 
 st.metric(
     "🌎 Índice Geral da Fazenda",
@@ -202,33 +227,28 @@ else:
         "🟢 Condição saudável"
     )
 
+if not df.empty:
 
-col6, col7 = st.columns(2)
-with col6:
-    st.subheader("Histórico de Temperatura")
-    st.line_chart(
-        df["temperatura"]
-    )
-    
-with col7:
+    col6, col7 = st.columns(2)
+
+    with col6:
+        st.subheader("Histórico de Temperatura")
+        st.line_chart(
+            df["temperatura"]
+        )
+
+    with col7:
+        st.subheader(
+            "Histórico de Umidade do Solo"
+        )
+        st.line_chart(
+            df["umidade_solo"]
+        )
+
     st.subheader(
-        "Histórico de Umidade do Solo"
+        "Índice NDVI"
     )
+
     st.line_chart(
-        df["umidade_solo"]
+        df["ndvi"]
     )
-
-st.subheader(
-    "Índice NDVI"
-)
-
-st.line_chart(
-    df["ndvi"]
-)
-
-
-
-st_autorefresh(
-    interval=15000,
-    key="refresh"
-)
