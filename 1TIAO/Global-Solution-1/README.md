@@ -2,78 +2,83 @@
 
 <p align="center">
 <a href="https://www.fiap.com.br/">
-  <img src="../../assets/logo-fiap.png"
-       alt="FIAP - Faculdade de Informática e Administração Paulista"
+  <img src="../../../assets/logo-fiap.png" 
+       alt="FIAP - Faculdade de Informática e Administração Paulista" 
        width="40%">
 </a>
 </p>
 
 <br>
 
-# SpaceFarm AI
+# Nome do projeto/atividade
 
-## Grupo 62
+## Nome do grupo
 
-## 👨‍🎓 Integrantes:
-- Richard Wrobel dos Santos — RM573998
-- Douglas Felicio da Silva — RM572312
-- Matheus Fontes — RM570457
+## 👨‍🎓 Integrantes: 
+- <a href="https://www.linkedin.com/in/sabrina-otoni-22525519b/">Nome do integrante 1</a>
+- <a href="https://www.linkedin.com/in/sabrina-otoni-22525519b/">Nome do integrante 2</a>
+- <a href="https://www.linkedin.com/in/sabrina-otoni-22525519b/">Nome do integrante 3</a> 
+- <a href="https://www.linkedin.com/in/sabrina-otoni-22525519b/">Nome do integrante 4</a> 
+- <a href="https://www.linkedin.com/in/sabrina-otoni-22525519b/">Nome do integrante 5</a>
 
 ## 👩‍🏫 Professores:
-### Tutor(a)
-- Nome do Tutor(a)
+### Tutor(a) 
+- <a href="https://www.linkedin.com/in/sabrina-otoni-22525519b/">Nome do Tutor</a>
 ### Coordenador(a)
-- Nome do Coordenador(a)
+- <a href="https://www.linkedin.com/in/andregodoichiovato/">Nome do Coordenador</a>
+
 
 ## 📜 Descrição
 
-**QUERO CONCORRER**
+*Descreva seu projeto com base no texto da Global Solution (até 600 palavras)*
 
-O **SpaceFarm AI** é uma plataforma de agricultura preditiva baseada em **observação espacial**, **IoT**, **Inteligência Artificial** e **Ciência de Dados**, desenvolvida para a Global Solution 2026.1 (tema: economia espacial).
-
-Produtores rurais têm dificuldade para identificar rapidamente situações de **estresse hídrico** e degradação da vegetação. O SpaceFarm AI resolve isso integrando leituras de sensores ambientais (temperatura, umidade do ar, umidade do solo e luminosidade) com o **NDVI** — índice de saúde da vegetação usado por satélites de observação da Terra.
-
-O fluxo da solução: um simulador de sensores IoT envia leituras para uma **API Flask**, que valida e persiste os dados no **MongoDB Atlas**. Os dados alimentam modelos de **Machine Learning** (Decision Tree e Random Forest, com 98% de acurácia em teste) que recomendam irrigação com nível de confiança e explicabilidade (importância das variáveis). Um **dashboard Streamlit** exibe tudo em tempo real: monitoramento ambiental, módulo de observação espacial, risco hídrico, previsões da IA e comparação entre modelos.
-
-## 🔗 Links da Entrega
-
-- 💻 **Repositório do projeto (código completo):** https://github.com/mthsfontes/spacefarm-ai
-- 🎬 **Vídeo demonstrativo (YouTube, não listado):** https://youtu.be/b45cHwczqPU
-- 📄 **PDF da entrega:** [SpaceFarm_AI_Documentacao.pdf](SpaceFarm_AI_Documentacao.pdf)
 
 ## 📁 Estrutura de pastas
 
-- <b>docs</b>: documentação do projeto (o PDF completo da entrega está na raiz desta pasta da atividade).
-- <b>src</b>: o código-fonte completo está versionado no [repositório do projeto](https://github.com/mthsfontes/spacefarm-ai), organizado em `backend/` (API Flask), `dashboard/` (Streamlit), `ml/` (pipeline de Machine Learning), `database/` (MongoDB Atlas), `data/` (geração de dataset) e `tests/` (pytest).
-- <b>data</b>: dataset sintético e leituras exportadas do MongoDB (ver `data/` e `ml/datasets/` no repositório do projeto).
+Dentre os arquivos e pastas presentes na raiz do projeto, definem-se:
+
+- <b>docs</b>: Pasta destinada à documentação textual, incluindo brainstorm, atas e registros de reuniões, desenhos, prints, diagramas, storyboard, estratégia de IA e arquitetura e etc.
+
+- <b>src</b>: Todo o código fonte desenvolvido, como scripts em Python, R, JS ou HTML, notebooks, códigos para ESP32/Arduino, APIs ou microsserviços, além de modelos, inferências e etc. Os tipos de arquivos e códigos são definidos no enunciado da atividade.
+
+- <b>data</b>: Contém os dados utilizados, como arquivos CSV, Excel, JSON, bases sintéticas e etc.
+
+- <b>README.md</b>: Arquivo que serve como guia e explicação geral sobre o projeto (o mesmo que você está lendo agora).
+
+
+‼️ OBSERVAÇÃO DO TUTOR, favor desconsiderar do seu arquivo final: não há obrigação de usar todas as pastas, use apenas o que fizer SENTIDO para a entrega. ‼️
+
+
+## 📎 Links e Observações
+
+- <b>Listagem de Links</b>: Links do projeto (ex. vídeos da entrega, páginas, etc.), 
+
+- <b>Explicação de decisões técnicas</b>: Observações do projeto,
+
+- <b>Observações Gerais</b>: Caso o projeto seja relacionado à alguma competição, deixar registrado no README se aceita ou não participar.
+
 
 ## 🔧 Como executar o código
 
-Pré-requisitos: Python 3.12+ e uma conta no MongoDB Atlas.
+*Acrescentar as informações necessárias sobre pré-requisitos (IDEs, serviços, bibliotecas etc.) e instalação básica do projeto, descrevendo eventuais versões utilizadas. Colocar um passo a passo de como o leitor pode baixar o seu código e executá-lo a partir de sua máquina ou seu repositório.*
 
-```bash
-git clone https://github.com/mthsfontes/spacefarm-ai.git
-cd spacefarm-ai/spacefarm-ai
-
-python -m venv venv
-source venv/bin/activate          # Windows: venv\Scripts\activate
-pip install -r requirements.txt
-
-cp .env.example .env              # preencher MONGO_URI
-
-python -m backend.app             # terminal 1 — API (porta 5000)
-python sensor_simulator.py        # terminal 2 — sensores IoT
-streamlit run dashboard/app.py    # terminal 3 — dashboard (porta 8501)
-```
-
-Alternativa com Docker: `docker compose up --build` (sobe API, dashboard e simulador).
-
-Testes: `pip install pytest mongomock && pytest tests/ -v` (14 testes, também executados via GitHub Actions).
 
 ## 🗃 Histórico de lançamentos
 
-* 1.0.0 - 09/06/2026 - Entrega da Global Solution 2026.1
+* 0.5.0 - XX/XX/2024
+    * 
+* 0.4.0 - XX/XX/2024
+    * 
+* 0.3.0 - XX/XX/2024
+    * 
+* 0.2.0 - XX/XX/2024
+    * 
+* 0.1.0 - XX/XX/2024
+    *
+
+---
+
 
 ## 📋 Licença
 
-Projeto acadêmico desenvolvido para a Global Solution FIAP 2026.1.
+<img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/cc.svg?ref=chooser-v1"><img style="height:22px!important;margin-left:3px;vertical-align:text-bottom;" src="https://mirrors.creativecommons.org/presskit/icons/by.svg?ref=chooser-v1"><p xmlns:cc="http://creativecommons.org/ns#" xmlns:dct="http://purl.org/dc/terms/"><a property="dct:title" rel="cc:attributionURL" href="https://github.com/SabrinaOtoni/TEMPLATE-FIAP-GRAD-ON-IA">MODELO GIT FIAP</a> por <a rel="cc:attributionURL dct:creator" property="cc:attributionName" href="https://fiap.com.br">FIAP</a> está licenciado sobre <a href="http://creativecommons.org/licenses/by/4.0/?ref=chooser-v1" target="_blank" rel="license noopener noreferrer" style="display:inline-block;">Attribution 4.0 International</a>.</p>
