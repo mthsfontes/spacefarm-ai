@@ -1,10 +1,29 @@
+# FIAP - Faculdade de Informática e Administração Paulista
+
+<p align="center">
+<a href="https://www.fiap.com.br/">
+  <img src="assets/logo-fiap.png" alt="FIAP" width="40%">
+</a>
+</p>
+
+<br>
+
 # SpaceFarm AI
 
-## Integrantes do Grupo
+## Grupo 62
 
-- Richard Wrobel dos Santos
-- [Douglas Felicio da Silva]
-- [Matheus Fontes]
+## 👨‍🎓 Integrantes:
+- Richard Wrobel dos Santos — RM573998
+- Douglas Felicio da Silva — RM572312
+- Matheus Fontes — RM570457
+
+## 🎬 Vídeo demonstrativo
+- YouTube (não listado): LINK_VIDEO
+
+## 📄 Documentação da entrega
+- [PDF da entrega](docs/SpaceFarm_AI_Documentacao.pdf)
+
+---
 
 
 ---
