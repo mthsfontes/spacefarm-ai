@@ -27,10 +27,10 @@
 - YouTube (não listado): https://youtu.be/b45cHwczqPU
 
 ## 📄 Documentação da entrega
-- [PDF da entrega](2TIAO/Global-Solution-1/docs/SpaceFarm_AI_Documentacao.pdf)
+- [PDF da entrega](docs/SpaceFarm_AI_Documentacao.pdf)
 
 ## 🗂 Estrutura do template TIAO-2026
-- A atividade completa (código, dados e documentação) está em [`2TIAO/Global-Solution-1`](2TIAO/Global-Solution-1), seguindo a hierarquia do [TEMPLATE-TIAO-2026](https://github.com/CaiqueFiap-2026/TEMPLATE-TIAO-2026)
+- A atividade está documentada em [`1TIAO/Global-Solution-1`](1TIAO/Global-Solution-1), seguindo a hierarquia do [TEMPLATE-TIAO-2026](https://github.com/CaiqueFiap-2026/TEMPLATE-TIAO-2026)
 
 ---
 
@@ -179,7 +179,7 @@ O dashboard do **SpaceFarm AI** apresenta de forma visual e interativa:
 
 ```bash
 git clone https://github.com/mthsfontes/spacefarm-ai.git
-cd spacefarm-ai/2TIAO/Global-Solution-1/src
+cd spacefarm-ai/spacefarm-ai
 ```
 
 ### 2. Criar e ativar o ambiente virtual
@@ -230,23 +230,23 @@ pytest tests/ -v
 ```text
 spacefarm-ai/
 │
-├── README.md                       # Este arquivo
-├── assets/                         # Logo FIAP
-├── 1TIAO/                          # Estrutura do template (1º ano)
-└── 2TIAO/
-    └── Global-Solution-1/          # ← A ATIVIDADE ESTÁ AQUI
-        ├── README.md               # Guia da atividade (padrão do template)
-        ├── docs/                   # PDF da entrega + vídeo demonstrativo
-        ├── data/                   # Datasets (JSON e CSVs)
-        └── src/                    # Código completo
-            ├── backend/            # API Flask
-            ├── dashboard/          # Dashboard Streamlit
-            ├── database/           # Conexão MongoDB Atlas
-            ├── ml/                 # Pipeline de Machine Learning
-            ├── tests/              # Testes (pytest)
-            ├── sensor_simulator.py # Simulador IoT
-            └── Dockerfile / docker-compose.yml
+├── README.md                  # Este arquivo
+├── assets/                    # Imagens e logos
+├── docs/                      # Entregáveis: PDF da documentação e vídeo
+│
+└── spacefarm-ai/              # Código-fonte do projeto
+    ├── backend/               # API Flask (validação, rotas, serviços)
+    ├── dashboard/             # Dashboard Streamlit
+    ├── database/              # Conexão com MongoDB Atlas (via .env)
+    ├── ml/                    # Pipeline de Machine Learning
+    ├── data/                  # Geração de dataset sintético
+    ├── tests/                 # Testes automatizados (pytest)
+    ├── sensor_simulator.py    # Simulador de sensores IoT
+    ├── Dockerfile / docker-compose.yml
+    └── requirements.txt
 ```
+
+Mais detalhes técnicos (rotas da API, pipeline de ML, CI) no [README do código](spacefarm-ai/README.md).
 
 ## Conclusão
 
