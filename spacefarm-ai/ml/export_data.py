@@ -1,15 +1,14 @@
-from pymongo import MongoClient
+import sys
+from pathlib import Path
+
+ROOT_DIR = Path(__file__).parent.parent
+sys.path.append(str(ROOT_DIR))
+
 import pandas as pd
 
-MONGO_URI = "mongodb+srv://spacefarm:4ge7C79msfKehTYg@spacefarm-cluster.xdsbuuu.mongodb.net/?appName=spacefarm-cluster"
+from database.mongo_service import sensor_collection
 
-client = MongoClient(MONGO_URI)
-
-db = client["spacefarm"]
-
-collection = db["sensor_readings"]
-
-data = list(collection.find())
+data = list(sensor_collection.find())
 
 for item in data:
     item.pop("_id", None)

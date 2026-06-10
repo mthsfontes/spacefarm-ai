@@ -1,6 +1,17 @@
+import os
+
+from dotenv import load_dotenv
 from pymongo import MongoClient
 
-MONGO_URI = "mongodb+srv://spacefarm:4ge7C79msfKehTYg@spacefarm-cluster.xdsbuuu.mongodb.net/?appName=spacefarm-cluster"
+load_dotenv()
+
+MONGO_URI = os.getenv("MONGO_URI")
+
+if not MONGO_URI:
+    raise RuntimeError(
+        "Variável MONGO_URI não definida. "
+        "Crie um arquivo .env baseado no .env.example."
+    )
 
 client = MongoClient(MONGO_URI)
 

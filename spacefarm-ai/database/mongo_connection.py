@@ -1,19 +1,24 @@
-from pymongo import MongoClient
+"""Script de teste de conexão com o MongoDB.
+
+Insere um documento de exemplo na coleção para validar
+que a conexão configurada no .env está funcionando.
+"""
+
+import sys
 from datetime import datetime
+from pathlib import Path
 
-MONGO_URI = "mongodb+srv://spacefarm:4ge7C79msfKehTYg@spacefarm-cluster.xdsbuuu.mongodb.net/?appName=spacefarm-cluster"
+ROOT_DIR = Path(__file__).parent.parent
+sys.path.append(str(ROOT_DIR))
 
-client = MongoClient(MONGO_URI)
-
-db = client["spacefarm"]
-
-sensor_collection = db["sensor_readings"]
+from database.mongo_service import sensor_collection
 
 document = {
     "temperatura": 28,
     "umidade_ar": 65,
     "umidade_solo": 40,
     "luminosidade": 800,
+    "ndvi": 0.7,
     "timestamp": datetime.now()
 }
 

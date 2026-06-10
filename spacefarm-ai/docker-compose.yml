@@ -1,0 +1,35 @@
+services:
+
+  api:
+    build: .
+    command: gunicorn --bind 0.0.0.0:5000 backend.app:app
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:5000/health')\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  dashboard:
+    build: .
+    command: streamlit run dashboard/app.py --server.port 8501 --server.address 0.0.0.0
+    ports:
+      - "8501:8501"
+    environment:
+      - API_BASE_URL=http://api:5000
+    depends_on:
+      api:
+        condition: service_healthy
+
+  simulator:
+    build: .
+    command: python sensor_simulator.py
+    environment:
+      - API_URL=http://api:5000/sensor-data
+      - INTERVALO_SEGUNDOS=2
+    depends_on:
+      api:
+        condition: service_healthy
